@@ -140,7 +140,7 @@ struct nbdkit_plugin {
   int (*get_ready) (void);
 };
 
-#if defined(NBDKIT_INTERNAL) || !defined(PE_COMPAT)
+#if defined(NBDKIT_INTERNAL) || !defined(WINDOWS_COMPAT)
 extern void nbdkit_set_error (int err);
 #else
 static void nbdkit_set_error (int err)
@@ -149,7 +149,7 @@ static void nbdkit_set_error (int err)
 }
 #endif
 
-#if defined(PE_COMPAT)
+#if defined(WINDOWS_COMPAT)
 #define NBDKIT_REGISTER_PLUGIN(plugin)                                  \
   NBDKIT_CXX_LANG_C                                                     \
   struct nbdkit_plugin *                                                \

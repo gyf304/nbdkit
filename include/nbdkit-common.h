@@ -77,7 +77,7 @@ extern "C" {
 #define NBDKIT_EXTENT_HOLE    (1<<0) /* Same as NBD_STATE_HOLE */
 #define NBDKIT_EXTENT_ZERO    (1<<1) /* Same as NBD_STATE_ZERO */
 
-#if defined(NBDKIT_INTERNAL) || !defined(PE_COMPAT)
+#if defined(NBDKIT_INTERNAL) || !defined(WINDOWS_COMPAT)
 extern void nbdkit_error (const char *msg, ...) ATTRIBUTE_FORMAT_PRINTF (1, 2);
 extern void nbdkit_verror (const char *msg, va_list args)
   ATTRIBUTE_FORMAT_PRINTF (1, 0);

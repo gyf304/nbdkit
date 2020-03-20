@@ -110,7 +110,7 @@ struct nbdkit_extent {
   uint32_t type;
 };
 
-#if defined(NBDKIT_INTERNAL) || !defined(PE_COMPAT)
+#if defined(NBDKIT_INTERNAL) || !defined(WINDOWS_COMPAT)
 extern struct nbdkit_extents *nbdkit_extents_new (uint64_t start, uint64_t end);
 extern void nbdkit_extents_free (struct nbdkit_extents *);
 extern size_t nbdkit_extents_count (const struct nbdkit_extents *);
@@ -224,7 +224,7 @@ struct nbdkit_filter {
                 int *err);
 };
 
-#if defined(PE_COMPAT)
+#if defined(WINDOWS_COMPAT)
 #define NBDKIT_REGISTER_FILTER(filter)                                  \
   NBDKIT_CXX_LANG_C                                                     \
   struct nbdkit_filter *                                                \

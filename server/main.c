@@ -833,7 +833,7 @@ open_plugin_so (size_t i, const char *name, int short_name)
 
   /* Initialize the plugin.  See dlopen(3) to understand C weirdness. */
   dlerror ();
-  #ifdef PE_COMPAT
+  #ifdef WINDOWS_COMPAT
   *(void **) (&functions_init) = dlsym (dl, "functions_init");
   if ((error = dlerror ()) != NULL) {
     fprintf (stderr, "%s: cannot find functions_init in %s: %s, %d\n", 
@@ -896,7 +896,7 @@ open_filter_so (struct backend *next, size_t i,
 
   /* Initialize the filter.  See dlopen(3) to understand C weirdness. */
   dlerror ();
-  #ifdef PE_COMPAT
+  #ifdef WINDOWS_COMPAT
   *(void **) (&functions_init) = dlsym (dl, "functions_init");
   if ((error = dlerror ()) != NULL) {
     fprintf (stderr, "%s: %s: %s\n", program_name, name, error);

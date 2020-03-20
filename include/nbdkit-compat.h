@@ -38,12 +38,12 @@
 #endif
 
 #if defined(__MINGW32__) || defined(__CYGWIN__) || defined(_MSC_VER)
-#define PE_COMPAT
+#define WINDOWS_COMPAT
 #endif
 
 struct nbdkit_extents;
 
-#if defined(PE_COMPAT)
+#if defined(WINDOWS_COMPAT)
 #include <string.h>
 #include <stdarg.h>
 #include <stdint.h>
