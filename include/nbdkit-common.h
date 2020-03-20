@@ -40,10 +40,13 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <errno.h>
-#include <sys/socket.h>
 
 #include <nbdkit-compat.h>
 #include <nbdkit-version.h>
+
+#if defined(NBDKIT_INTERNAL) || !defined(WINDOWS_COMPAT)
+#include <sys/socket.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -226,10 +229,6 @@ static int nbdkit_nanosleep (unsigned sec, unsigned nsec)
 static const char *nbdkit_export_name (void)
 {
   return _nbdkit_functions.nbdkit_export_name();
-}
-static int nbdkit_peer_name (struct sockaddr *addr, socklen_t *addrlen)
-{
-  return _nbdkit_functions.nbdkit_peer_name(addr, addrlen);
 }
 static void nbdkit_shutdown (void)
 {

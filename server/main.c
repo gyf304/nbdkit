@@ -151,6 +151,7 @@ dump_config (void)
   printf ("%s=%s\n", "version", PACKAGE_VERSION);
 }
 
+#ifdef WINDOWS_COMPAT
 static void init_functions ()
 {
   functions = malloc (sizeof *functions);
@@ -177,7 +178,7 @@ static void init_functions ()
   functions->nbdkit_realpath = nbdkit_realpath;
   functions->nbdkit_nanosleep = nbdkit_nanosleep;
   functions->nbdkit_export_name = nbdkit_export_name;
-  functions->nbdkit_peer_name = nbdkit_peer_name;
+  functions->nbdkit_peer_name = NULL;
   functions->nbdkit_shutdown = nbdkit_shutdown;
   functions->nbdkit_add_extent = nbdkit_add_extent;
   functions->nbdkit_extents_new = nbdkit_extents_new;
@@ -185,6 +186,7 @@ static void init_functions ()
   functions->nbdkit_extents_count = nbdkit_extents_count;
   functions->nbdkit_get_extent = nbdkit_get_extent;
 }
+#endif
 
 int
 main (int argc, char *argv[])
@@ -212,7 +214,9 @@ main (int argc, char *argv[])
     perror ("expecting stdin/stdout to be opened");
     exit (EXIT_FAILURE);
   }
+  #ifdef WINDOWS_COMPAT
   init_functions();
+  #endif
 
 #if !ENABLE_LIBFUZZER
   threadlocal_init ();

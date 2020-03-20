@@ -52,6 +52,7 @@ struct nbdkit_extents;
 extern "C" {
 #endif
 
+#ifdef WINDOWS_COMPAT
 struct nbdkit_functions {
   void (*nbdkit_verror) (const char *msg, va_list args);
   void (*nbdkit_vdebug) (const char *msg, va_list args);
@@ -72,7 +73,7 @@ struct nbdkit_functions {
   char * (*nbdkit_realpath) (const char *path);
   int (*nbdkit_nanosleep) (unsigned sec, unsigned nsec);
   const char * (*nbdkit_export_name) (void);
-  int (*nbdkit_peer_name) (struct sockaddr *addr, socklen_t *addrlen);
+  int (*nbdkit_peer_name) (void *addr, void *addrlen);
   void (*nbdkit_shutdown) (void);
   
   struct nbdkit_extents *(*nbdkit_extents_new) (uint64_t start, uint64_t end);
@@ -84,7 +85,8 @@ struct nbdkit_functions {
   void (*nbdkit_set_error) (int err);
 };
 
-static struct nbdkit_functions _nbdkit_functions;
+struct nbdkit_functions _nbdkit_functions;
+#endif
 
 #ifdef __cplusplus
 }
