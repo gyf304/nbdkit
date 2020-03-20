@@ -38,7 +38,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-
+#define NBDKIT_INTERNAL
 #include <nbdkit-plugin.h>
 
 /* Convert exit status to nbd_error.  If the exit status was nonzero

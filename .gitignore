@@ -7,6 +7,8 @@
 *.log
 *.o
 *.trs
+*.exe
+*.dll
 
 .deps
 .dirstamp

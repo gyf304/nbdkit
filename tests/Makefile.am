@@ -299,6 +299,7 @@ test_shutdown_plugin_la_CFLAGS = $(WARNINGS_CFLAGS)
 # https://lists.gnu.org/archive/html/libtool/2007-07/msg00067.html
 test_shutdown_plugin_la_LDFLAGS = \
 	-module -avoid-version -shared -rpath /nowhere \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 
 endif HAVE_PLUGINS
@@ -354,6 +355,7 @@ test_ansi_c_plugin_la_CFLAGS = $(WARNINGS_CFLAGS)
 # https://lists.gnu.org/archive/html/libtool/2007-07/msg00067.html
 test_ansi_c_plugin_la_LDFLAGS = \
 	-module -avoid-version -shared -rpath /nowhere \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 endif CAN_TEST_ANSI_C
 
@@ -380,6 +382,7 @@ test_cxx_plugin_la_CXXFLAGS = $(WARNINGS_CFLAGS)
 # https://lists.gnu.org/archive/html/libtool/2007-07/msg00067.html
 test_cxx_plugin_la_LDFLAGS = \
 	-module -avoid-version -shared -rpath /nowhere \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 
 test_cxx_filter_la_SOURCES = \
@@ -394,6 +397,7 @@ test_cxx_filter_la_CXXFLAGS = $(WARNINGS_CFLAGS)
 # https://lists.gnu.org/archive/html/libtool/2007-07/msg00067.html
 test_cxx_filter_la_LDFLAGS = \
 	-module -avoid-version -shared -rpath /nowhere \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 endif HAVE_CXX
 
@@ -811,6 +815,7 @@ libvixDiskLib_la_CXXFLAGS = $(WARNINGS_CFLAGS)
 # https://lists.gnu.org/archive/html/libtool/2007-07/msg00067.html
 libvixDiskLib_la_LDFLAGS = \
 	-shared -version-number 6:0:0 -rpath /nowhere \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 endif HAVE_VDDK
 
@@ -1003,6 +1008,7 @@ test_layers_plugin_la_CFLAGS = $(WARNINGS_CFLAGS)
 # https://lists.gnu.org/archive/html/libtool/2007-07/msg00067.html
 test_layers_plugin_la_LDFLAGS = \
 	-module -avoid-version -shared -rpath /nowhere \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 
 test_layers_filter1_la_SOURCES = \
@@ -1015,6 +1021,7 @@ test_layers_filter1_la_CFLAGS = $(WARNINGS_CFLAGS) -Dlayer='"filter1"'
 # https://lists.gnu.org/archive/html/libtool/2007-07/msg00067.html
 test_layers_filter1_la_LDFLAGS = \
 	-module -avoid-version -shared -rpath /nowhere \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 
 test_layers_filter2_la_SOURCES = \
@@ -1027,6 +1034,7 @@ test_layers_filter2_la_CFLAGS = $(WARNINGS_CFLAGS) -Dlayer='"filter2"'
 # https://lists.gnu.org/archive/html/libtool/2007-07/msg00067.html
 test_layers_filter2_la_LDFLAGS = \
 	-module -avoid-version -shared -rpath /nowhere \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 
 test_layers_filter3_la_SOURCES = \
@@ -1039,6 +1047,7 @@ test_layers_filter3_la_CFLAGS = $(WARNINGS_CFLAGS) -Dlayer='"filter3"'
 # https://lists.gnu.org/archive/html/libtool/2007-07/msg00067.html
 test_layers_filter3_la_LDFLAGS = \
 	-module -avoid-version -shared -rpath /nowhere \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 
 # blocksize filter test.

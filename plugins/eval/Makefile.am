@@ -69,6 +69,7 @@ nbdkit_eval_plugin_la_LIBADD = \
 nbdkit_eval_plugin_la_LDFLAGS = \
 	-module -avoid-version -shared \
 	-Wl,--version-script=$(top_srcdir)/plugins/plugins.syms \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 
 if HAVE_POD

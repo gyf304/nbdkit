@@ -60,6 +60,7 @@ nbdkit_perl_plugin_la_LIBADD = \
 nbdkit_perl_plugin_la_LDFLAGS = \
 	-module -avoid-version -shared \
 	-Wl,--version-script=$(top_srcdir)/plugins/plugins.syms \
+	$(SHARED_LDFLAGS) \
 	$(PERL_LDOPTS) \
 	$(NULL)
 

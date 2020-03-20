@@ -61,6 +61,7 @@ nbdkit_xz_filter_la_LIBADD = \
 nbdkit_xz_filter_la_LDFLAGS = \
 	-module -avoid-version -shared \
 	-Wl,--version-script=$(top_srcdir)/filters/filters.syms \
+	$(SHARED_LDFLAGS) \
 	$(NULL)
 
 if HAVE_POD

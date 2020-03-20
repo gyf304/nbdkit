@@ -36,6 +36,7 @@
 #include <stdlib.h>
 
 #include "cleanup.h"
+#define NBDKIT_INTERNAL
 #include "nbdkit-filter.h"
 
 void

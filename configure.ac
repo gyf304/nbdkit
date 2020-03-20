@@ -397,6 +397,31 @@ dnl restore CFLAGS
 LDFLAGS="${acx_nbdkit_save_LDFLAGS}"
 AC_SUBST([DL_LDFLAGS])
 
+dnl On mingw we should define _spawnv
+AC_MSG_CHECKING(whether _spawnv needs to be defined)
+AS_CASE([$host_os],
+  [mingw*], [CFLAGS="$CFLAGS -D_spawnv=spawnv"; AC_MSG_RESULT(yes)],
+  [AC_MSG_RESULT(no)]
+)
+
+dnl On mingw we should enable the -no-undefined flag
+AC_MSG_CHECKING(whether -no-undefined is needed for shared libraries)
+AS_CASE([$host_os],
+  [mingw*], [SHARED_LDFLAGS="$SHARED_LDFLAGS -no-undefined"; AC_MSG_RESULT(yes)],
+  [AC_MSG_RESULT(no)]
+)
+AC_SUBST([SHARED_LDFLAGS])
+
+dnl On mingw we should enable MINGW specific flags
+AC_MSG_CHECKING([if we should enable MINGW specific flags])
+AS_CASE([$host_os],
+  [mingw*], [mingw=yes],
+  [mingw=no]
+)
+AC_MSG_RESULT([$mingw])
+AM_CONDITIONAL([MINGW],
+               [test "x$mingw" = "xyes"])
+
 dnl Check for dladdr in -ldl, optional.  This is a glibc extension.
 old_LIBS="$LIBS"
 LIBS="$DL_LIBS $LIBS"

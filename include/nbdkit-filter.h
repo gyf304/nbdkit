@@ -110,11 +110,31 @@ struct nbdkit_extent {
   uint32_t type;
 };
 
+#if defined(NBDKIT_INTERNAL) || !defined(PE_COMPAT)
 extern struct nbdkit_extents *nbdkit_extents_new (uint64_t start, uint64_t end);
 extern void nbdkit_extents_free (struct nbdkit_extents *);
 extern size_t nbdkit_extents_count (const struct nbdkit_extents *);
 extern struct nbdkit_extent nbdkit_get_extent (const struct nbdkit_extents *,
                                                size_t);
+#else
+static struct nbdkit_extents *nbdkit_extents_new (uint64_t start, uint64_t end)
+{
+  return _nbdkit_functions.nbdkit_extents_new(start, end);
+}
+static void nbdkit_extents_free (struct nbdkit_extents *extents)
+{
+  _nbdkit_functions.nbdkit_extents_free(extents);
+}
+static size_t nbdkit_extents_count (const struct nbdkit_extents *extents)
+{
+  return _nbdkit_functions.nbdkit_extents_count(extents);
+}
+static struct nbdkit_extent nbdkit_get_extent (const struct nbdkit_extents *extents,
+                                               size_t size)
+{
+  return _nbdkit_functions.nbdkit_get_extent(extents, size);
+}
+#endif
 
 /* Filter struct. */
 struct nbdkit_filter {
@@ -204,6 +224,24 @@ struct nbdkit_filter {
                 int *err);
 };
 
+#if defined(PE_COMPAT)
+#define NBDKIT_REGISTER_FILTER(filter)                                  \
+  NBDKIT_CXX_LANG_C                                                     \
+  struct nbdkit_filter *                                                \
+  filter_init (void)                                                    \
+  {                                                                     \
+    (filter)._api_version = NBDKIT_FILTER_API_VERSION;                  \
+    (filter)._version = NBDKIT_VERSION_STRING;                          \
+    return &(filter);                                                   \
+  }                                                                     \
+  NBDKIT_CXX_LANG_C                                                     \
+  void                                                                  \
+  functions_init (struct nbdkit_functions *functions)                   \
+  {                                                                     \
+    memcpy(&_nbdkit_functions, functions,                               \
+           sizeof(struct nbdkit_functions));                            \
+  }
+#else
 #define NBDKIT_REGISTER_FILTER(filter)                                  \
   NBDKIT_CXX_LANG_C                                                     \
   struct nbdkit_filter *                                                \
@@ -213,6 +251,7 @@ struct nbdkit_filter {
     (filter)._version = NBDKIT_VERSION_STRING;                          \
     return &(filter);                                                   \
   }
+#endif
 
 #ifdef __cplusplus
 }
