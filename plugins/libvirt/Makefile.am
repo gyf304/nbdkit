@@ -54,6 +54,7 @@ nbdkit_libvirt_plugin_la_LIBADD = \
 	$(NULL)
 nbdkit_libvirt_plugin_la_LDFLAGS = \
 	$(SHARED_LDFLAGS) \
+	-module -shared \
 	-Wl,--version-script=$(top_srcdir)/plugins/plugins.syms \
 	$(NULL)
 

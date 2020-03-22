@@ -47,6 +47,7 @@ nbdkit_noparallel_filter_la_CPPFLAGS = \
 nbdkit_noparallel_filter_la_CFLAGS = $(WARNINGS_CFLAGS)
 nbdkit_noparallel_filter_la_LDFLAGS = \
 	$(SHARED_LDFLAGS) \
+	-module -shared \
 	-Wl,--version-script=$(top_srcdir)/filters/filters.syms \
 	$(NULL)
 

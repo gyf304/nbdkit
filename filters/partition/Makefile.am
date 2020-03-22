@@ -52,6 +52,7 @@ nbdkit_partition_filter_la_CPPFLAGS = \
 nbdkit_partition_filter_la_CFLAGS = $(WARNINGS_CFLAGS)
 nbdkit_partition_filter_la_LDFLAGS = \
 	$(SHARED_LDFLAGS) \
+	-module -shared \
 	-Wl,--version-script=$(top_srcdir)/filters/filters.syms \
 	$(NULL)
 nbdkit_partition_filter_la_LIBADD = \

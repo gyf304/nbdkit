@@ -406,7 +406,7 @@ LIBS="$old_LIBS"
 dnl Set SHARED_LDFLAGS used when linking all plugins and filters.
 dnl On mingw we should enable the -no-undefined flag.
 AC_MSG_CHECKING([SHARED_LDFLAGS])
-SHARED_LDFLAGS="$SHARED_LDFLAGS -module -avoid-version -shared"
+SHARED_LDFLAGS="$SHARED_LDFLAGS -avoid-version"
 AS_CASE([$host_os],
     [mingw*], [SHARED_LDFLAGS="$SHARED_LDFLAGS -no-undefined"],
     []

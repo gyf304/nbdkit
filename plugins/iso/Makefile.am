@@ -50,6 +50,7 @@ nbdkit_iso_plugin_la_CPPFLAGS = \
 nbdkit_iso_plugin_la_CFLAGS = $(WARNINGS_CFLAGS)
 nbdkit_iso_plugin_la_LDFLAGS = \
 	$(SHARED_LDFLAGS) \
+	-module -shared \
 	-Wl,--version-script=$(top_srcdir)/plugins/plugins.syms \
 	$(NULL)
 nbdkit_iso_plugin_la_LIBADD = \

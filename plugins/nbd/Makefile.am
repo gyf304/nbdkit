@@ -54,6 +54,7 @@ nbdkit_nbd_plugin_la_CFLAGS = \
 	$(NULL)
 nbdkit_nbd_plugin_la_LDFLAGS = \
 	$(SHARED_LDFLAGS) \
+	-module -shared \
 	-Wl,--version-script=$(top_srcdir)/plugins/plugins.syms \
 	$(NULL)
 nbdkit_nbd_plugin_la_LIBADD = \
