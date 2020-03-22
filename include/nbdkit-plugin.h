@@ -140,8 +140,34 @@ struct nbdkit_plugin {
   int (*get_ready) (void);
 };
 
+#if defined(NBDKIT_INTERNAL) || !defined(WINDOWS_COMPAT)
 extern void nbdkit_set_error (int err);
+#else
+static void nbdkit_set_error (int err)
+{
+  _nbdkit_functions.set_error (err);
+}
+#endif
 
+#if defined(WINDOWS_COMPAT)
+#define NBDKIT_REGISTER_PLUGIN(plugin)                                  \
+  NBDKIT_CXX_LANG_C __declspec(dllexport)                               \
+  struct nbdkit_plugin *                                                \
+  plugin_init (void)                                                    \
+  {                                                                     \
+    (plugin)._struct_size = sizeof (plugin);                            \
+    (plugin)._api_version = NBDKIT_API_VERSION;                         \
+    (plugin)._thread_model = THREAD_MODEL;                              \
+    return &(plugin);                                                   \
+  }                                                                     \
+  NBDKIT_CXX_LANG_C __declspec(dllexport)                               \
+  void                                                                  \
+  functions_init (struct nbdkit_functions *functions)                   \
+  {                                                                     \
+    memcpy(&_nbdkit_functions, functions,                               \
+           sizeof(struct nbdkit_functions));                            \
+  }
+#else
 #define NBDKIT_REGISTER_PLUGIN(plugin)                                  \
   NBDKIT_CXX_LANG_C                                                     \
   struct nbdkit_plugin *                                                \
@@ -152,6 +178,7 @@ extern void nbdkit_set_error (int err);
     (plugin)._thread_model = THREAD_MODEL;                              \
     return &(plugin);                                                   \
   }
+#endif
 
 #ifdef __cplusplus
 }

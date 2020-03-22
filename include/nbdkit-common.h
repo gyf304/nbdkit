@@ -40,9 +40,13 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <errno.h>
-#include <sys/socket.h>
 
+#include <nbdkit-compat.h>
 #include <nbdkit-version.h>
+
+#if defined(NBDKIT_INTERNAL) || !defined(WINDOWS_COMPAT)
+#include <sys/socket.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,6 +80,7 @@ extern "C" {
 #define NBDKIT_EXTENT_HOLE    (1<<0) /* Same as NBD_STATE_HOLE */
 #define NBDKIT_EXTENT_ZERO    (1<<1) /* Same as NBD_STATE_ZERO */
 
+#if defined(NBDKIT_INTERNAL) || !defined(WINDOWS_COMPAT)
 extern void nbdkit_error (const char *msg, ...) ATTRIBUTE_FORMAT_PRINTF (1, 2);
 extern void nbdkit_verror (const char *msg, va_list args)
   ATTRIBUTE_FORMAT_PRINTF (1, 0);
@@ -113,9 +118,133 @@ extern const char *nbdkit_export_name (void);
 extern int nbdkit_peer_name (struct sockaddr *addr, socklen_t *addrlen);
 extern void nbdkit_shutdown (void);
 
-struct nbdkit_extents;
 extern int nbdkit_add_extent (struct nbdkit_extents *,
                               uint64_t offset, uint64_t length, uint32_t type);
+#else
+static void nbdkit_error (const char *msg, ...)
+  ATTRIBUTE_FORMAT_PRINTF (1, 2);
+static void nbdkit_error (const char *msg, ...)
+{
+  va_list args;
+  va_start(args, msg);
+  _nbdkit_functions.verror(msg, args);
+  va_end(args);
+}
+static void nbdkit_verror (const char *msg, va_list args)
+  ATTRIBUTE_FORMAT_PRINTF (1, 0);
+static void nbdkit_verror (const char *msg, va_list args)
+{
+  _nbdkit_functions.verror (msg, args);
+}
+static void nbdkit_debug (const char *msg, ...)
+  ATTRIBUTE_FORMAT_PRINTF (1, 2);
+static void nbdkit_debug (const char *msg, ...)
+{
+  va_list args;
+  va_start (args, msg);
+  _nbdkit_functions.vdebug (msg, args);
+  va_end (args);
+}
+static void nbdkit_vdebug (const char *msg, va_list args)
+  ATTRIBUTE_FORMAT_PRINTF (1, 0);
+static void nbdkit_vdebug (const char *msg, va_list args)
+{
+  _nbdkit_functions.vdebug (msg, args);
+}
+
+static char *nbdkit_absolute_path (const char *path)
+{
+  return _nbdkit_functions.absolute_path (path);
+}
+static int64_t nbdkit_parse_size (const char *str)
+{
+  return _nbdkit_functions.parse_size (str);
+}
+static int nbdkit_parse_bool (const char *str)
+{
+  return _nbdkit_functions.parse_bool (str);
+}
+static int nbdkit_parse_int (const char *what, const char *str,
+                            int *r)
+{
+  return _nbdkit_functions.parse_int (what, str, r);
+}
+static int nbdkit_parse_unsigned (const char *what, const char *str,
+                                  unsigned *r)
+{
+  return _nbdkit_functions.parse_unsigned (what, str, r);
+}
+static int nbdkit_parse_int8_t (const char *what, const char *str,
+                                int8_t *r)
+{
+  return _nbdkit_functions.parse_int8_t (what, str, r);
+}
+static int nbdkit_parse_uint8_t (const char *what, const char *str,
+                                uint8_t *r)
+{
+  return _nbdkit_functions.parse_uint8_t (what, str, r);
+}
+static int nbdkit_parse_int16_t (const char *what, const char *str,
+                                int16_t *r)
+{
+  return _nbdkit_functions.parse_int16_t (what, str, r);
+}
+static int nbdkit_parse_uint16_t (const char *what, const char *str,
+                                  uint16_t *r)
+{
+  return _nbdkit_functions.parse_uint16_t (what, str, r);
+}
+static int nbdkit_parse_int32_t (const char *what, const char *str,
+                                int32_t *r)
+{
+  return _nbdkit_functions.parse_int32_t (what, str, r);
+}
+static int nbdkit_parse_uint32_t (const char *what, const char *str,
+                                  uint32_t *r)
+{
+  return _nbdkit_functions.parse_uint32_t (what, str, r);
+}
+static int nbdkit_parse_int64_t (const char *what, const char *str,
+                                int64_t *r)
+{
+  return _nbdkit_functions.parse_int64_t (what, str, r);
+}
+static int nbdkit_parse_uint64_t (const char *what, const char *str,
+                                  uint64_t *r)
+{
+  return _nbdkit_functions.parse_uint64_t(what, str, r);
+}
+static int nbdkit_read_password (const char *value, char **password)
+{
+  return _nbdkit_functions.read_password(value, password);
+}
+static char *nbdkit_realpath (const char *path)
+{
+  return _nbdkit_functions.realpath(path);
+}
+static int nbdkit_nanosleep (unsigned sec, unsigned nsec)
+{
+  return _nbdkit_functions.nanosleep(sec, nsec);
+}
+static const char *nbdkit_export_name (void)
+{
+  return _nbdkit_functions.export_name();
+}
+static int nbdkit_peer_name (void *addr, void *addrlen)
+{
+  return _nbdkit_functions.peer_name(addr, addrlen);
+}
+static void nbdkit_shutdown (void)
+{
+  _nbdkit_functions.shutdown();
+}
+
+static int nbdkit_add_extent (struct nbdkit_extents *extents,
+                              uint64_t offset, uint64_t length, uint32_t type)
+{
+  return _nbdkit_functions.add_extent(extents, offset, length, type);
+}
+#endif
 
 /* A static non-NULL pointer which can be used when you don't need a
  * per-connection handle.
