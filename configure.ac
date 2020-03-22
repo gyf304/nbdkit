@@ -408,7 +408,7 @@ dnl On mingw we should enable the -no-undefined flag.
 AC_MSG_CHECKING([SHARED_LDFLAGS])
 SHARED_LDFLAGS="$SHARED_LDFLAGS -avoid-version"
 AS_CASE([$host_os],
-    [mingw*], [SHARED_LDFLAGS="$SHARED_LDFLAGS -no-undefined"],
+    [mingw*|msys*|cygwin*], [SHARED_LDFLAGS="$SHARED_LDFLAGS -no-undefined"],
     []
 )
 AC_MSG_RESULT([$SHARED_LDFLAGS])
