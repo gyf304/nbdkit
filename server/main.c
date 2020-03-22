@@ -104,6 +104,7 @@ unsigned int socket_activation  /* $LISTEN_FDS and $LISTEN_PID set */;
 
 /* The linked list of zero or more filters, and one plugin. */
 struct backend *top;
+struct nbdkit_functions *functions = NULL;
 
 static char *random_fifo_dir = NULL;
 static char *random_fifo = NULL;
@@ -152,6 +153,49 @@ dump_config (void)
   printf ("%s=%d\n", "version_minor", NBDKIT_VERSION_MINOR);
 }
 
+#ifdef WINDOWS_COMPAT
+static int dummy_peer_name (void *addr, void *addrlen)
+{
+  nbdkit_error ("nbdkit_peer_name not implemented on this platform");
+  return -1;
+}
+
+static void init_functions ()
+{
+  functions = malloc (sizeof *functions);
+  if (functions == NULL) {
+    perror ("malloc");
+    exit (EXIT_FAILURE);
+  }
+  functions->verror = nbdkit_verror;
+  functions->vdebug = nbdkit_vdebug;
+  functions->absolute_path = nbdkit_absolute_path;
+  functions->parse_size = nbdkit_parse_size;
+  functions->parse_bool = nbdkit_parse_bool;
+  functions->parse_int = nbdkit_parse_int;
+  functions->parse_unsigned = nbdkit_parse_unsigned;
+  functions->parse_int8_t = nbdkit_parse_int8_t;
+  functions->parse_uint8_t = nbdkit_parse_uint8_t;
+  functions->parse_int16_t = nbdkit_parse_int16_t;
+  functions->parse_uint16_t = nbdkit_parse_uint16_t;
+  functions->parse_int32_t = nbdkit_parse_int32_t;
+  functions->parse_uint32_t = nbdkit_parse_uint32_t;
+  functions->parse_int64_t = nbdkit_parse_int64_t;
+  functions->parse_uint64_t = nbdkit_parse_uint64_t;
+  functions->read_password = nbdkit_read_password;
+  functions->realpath = nbdkit_realpath;
+  functions->nanosleep = nbdkit_nanosleep;
+  functions->export_name = nbdkit_export_name;
+  functions->peer_name = dummy_peer_name;
+  functions->shutdown = nbdkit_shutdown;
+  functions->add_extent = nbdkit_add_extent;
+  functions->extents_new = nbdkit_extents_new;
+  functions->extents_free = nbdkit_extents_free;
+  functions->extents_count = nbdkit_extents_count;
+  functions->get_extent = nbdkit_get_extent;
+}
+#endif
+
 int
 main (int argc, char *argv[])
 {
@@ -178,6 +222,9 @@ main (int argc, char *argv[])
     perror ("expecting stdin/stdout to be opened");
     exit (EXIT_FAILURE);
   }
+#ifdef WINDOWS_COMPAT
+  init_functions ();
+#endif
 
 #if !ENABLE_LIBFUZZER
   threadlocal_init ();
@@ -772,6 +819,7 @@ open_plugin_so (size_t i, const char *name, int short_name)
   bool free_filename = false;
   void *dl;
   struct nbdkit_plugin *(*plugin_init) (void);
+  void *(*functions_init) (struct nbdkit_functions *);
   char *error;
 
   if (short_name) {
@@ -797,6 +845,18 @@ open_plugin_so (size_t i, const char *name, int short_name)
 
   /* Initialize the plugin.  See dlopen(3) to understand C weirdness. */
   dlerror ();
+#ifdef WINDOWS_COMPAT
+  *(void **) (&functions_init) = dlsym (dl, "functions_init");
+  if ((error = dlerror ()) != NULL) {
+    fprintf (stderr, "%s: %s: %s\n", program_name, name, error);
+    exit (EXIT_FAILURE);
+  }
+  if (!functions_init) {
+    fprintf (stderr, "%s: %s: invalid functions_init\n", program_name, name);
+    exit (EXIT_FAILURE);
+  }
+  functions_init (functions);
+#endif
   *(void **) (&plugin_init) = dlsym (dl, "plugin_init");
   if ((error = dlerror ()) != NULL) {
     fprintf (stderr, "%s: %s: %s\n", program_name, name, error);
@@ -825,6 +885,7 @@ open_filter_so (struct backend *next, size_t i,
   bool free_filename = false;
   void *dl;
   struct nbdkit_filter *(*filter_init) (void);
+  void *(*functions_init) (struct nbdkit_functions *);
   char *error;
 
   if (short_name) {
@@ -846,6 +907,18 @@ open_filter_so (struct backend *next, size_t i,
 
   /* Initialize the filter.  See dlopen(3) to understand C weirdness. */
   dlerror ();
+#ifdef WINDOWS_COMPAT
+  *(void **) (&functions_init) = dlsym (dl, "functions_init");
+  if ((error = dlerror ()) != NULL) {
+    fprintf (stderr, "%s: %s: %s\n", program_name, name, error);
+    exit (EXIT_FAILURE);
+  }
+  if (!functions_init) {
+    fprintf (stderr, "%s: %s: invalid functions_init\n", program_name, name);
+    exit (EXIT_FAILURE);
+  }
+  functions_init (functions);
+#endif
   *(void **) (&filter_init) = dlsym (dl, "filter_init");
   if ((error = dlerror ()) != NULL) {
     fprintf (stderr, "%s: %s: %s\n", program_name, name, error);
